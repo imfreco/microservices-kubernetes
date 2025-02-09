@@ -1,5 +1,6 @@
 package org.imfreco.msvc.users.services;
 
+import org.imfreco.msvc.users.clients.CourseRestClient;
 import org.imfreco.msvc.users.models.User;
 import org.imfreco.msvc.users.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,9 @@ import java.util.Optional;
 public class UserService implements IUserService {
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private CourseRestClient courseClient;
 
     @Override
     @Transactional(readOnly = true)
@@ -41,6 +45,7 @@ public class UserService implements IUserService {
     @Transactional
     public void delete(Long id) {
         userRepository.deleteById(id);
+        courseClient.deleteCourseUserByUserId(id);
     }
 
     @Override

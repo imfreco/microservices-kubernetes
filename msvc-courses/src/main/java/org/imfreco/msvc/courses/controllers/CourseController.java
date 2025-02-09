@@ -62,6 +62,12 @@ public class CourseController {
         return ResponseEntity.noContent().build();
     }
 
+    @DeleteMapping("/course-user/{userId}")
+    public ResponseEntity<?> deleteCourseUser(@PathVariable Long userId) {
+        courseService.deleteCourseUserByUserId(userId);
+        return ResponseEntity.noContent().build();
+    }
+
     @PutMapping("/{courseId}/assign-user")
     public ResponseEntity<?> assignUser(@RequestBody User user, @PathVariable Long courseId) {
         Optional<User> userAssigned;

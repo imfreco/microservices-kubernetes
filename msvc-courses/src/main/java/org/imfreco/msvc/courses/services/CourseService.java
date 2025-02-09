@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -55,6 +56,12 @@ public class CourseService implements ICourseService {
 
     @Override
     @Transactional
+    public void deleteCourseUserByUserId(Long userId) {
+        courseRepository.deleteCourseUserByUserId(userId);
+    }
+
+    @Override
+    @Transactional
     public Optional<User> assignUserToCourse(User user, Long courseId) {
         Optional<Course> courseFound = courseRepository.findById(courseId);
         if (courseFound.isPresent()) {
@@ -76,10 +83,12 @@ public class CourseService implements ICourseService {
         if (courseFound.isPresent()) {
             User userFound = userClient.getById(user.getId());
             Course currentCourse = courseFound.get();
-            CourseUser courseUser = new CourseUser();
-            courseUser.setUserId(userFound.getId());
-            currentCourse.removeCourseUser(courseUser);
-            courseRepository.save(currentCourse);
+            Optional<CourseUser> courseUserToDelete = currentCourse.getCourseUsers().stream()
+                    .filter(courseUser -> Objects.equals(courseUser.getUserId(), userFound.getId())).findFirst();
+            if(courseUserToDelete.isPresent()) {
+                currentCourse.removeCourseUser(courseUserToDelete.get());
+                courseRepository.save(currentCourse);
+            }
             return Optional.of(userFound);
         }
         return Optional.empty();

@@ -3,13 +3,13 @@ package org.imfreco.msvc.courses.models;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "courses_users")
+@Table(name = "courses_users", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "course_id"})})
 public class CourseUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id", unique = true)
+    @Column(name = "user_id")
     private Long userId;
 
     public Long getId() {
