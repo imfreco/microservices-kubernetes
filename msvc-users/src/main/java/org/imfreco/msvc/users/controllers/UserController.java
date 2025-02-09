@@ -30,10 +30,10 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<?> create(@Valid @RequestBody User user, BindingResult result) {
-        if(result.hasErrors()) {
+        if (result.hasErrors()) {
             return validate(result);
         }
-        if(userService.getByEmail(user.getEmail()).isPresent()) {
+        if (userService.getByEmail(user.getEmail()).isPresent()) {
             return ResponseEntity.badRequest().body(Collections.singletonMap("message", "email already exist"));
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.save(user));
@@ -41,15 +41,15 @@ public class UserController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@Valid @RequestBody User user, BindingResult result, @PathVariable Long id) {
-        if(result.hasErrors()) {
+        if (result.hasErrors()) {
             return validate(result);
         }
         Optional<User> userFound = userService.getById(id);
-        if(userFound.isEmpty()) {
+        if (userFound.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         User currentUser = userFound.get();
-        if(!user.getEmail().equalsIgnoreCase(currentUser.getEmail()) && userService.getByEmail(user.getEmail()).isPresent()) {
+        if (!user.getEmail().equalsIgnoreCase(currentUser.getEmail()) && userService.getByEmail(user.getEmail()).isPresent()) {
             return ResponseEntity.badRequest().body(Collections.singletonMap("message", "email already exits"));
         }
         currentUser.setName(user.getName());
@@ -60,7 +60,7 @@ public class UserController {
     @DeleteMapping("/{id}")
     public ResponseEntity<User> delete(@PathVariable Long id) {
         Optional<User> userFound = userService.getById(id);
-        if(userFound.isEmpty()) {
+        if (userFound.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         userService.delete(id);

@@ -30,10 +30,10 @@ public class CourseUser {
 
     @Override
     public boolean equals(Object obj) {
-        if(this == obj) {
+        if (this == obj) {
             return true;
         }
-        if(!(obj instanceof CourseUser courseUser)) {
+        if (!(obj instanceof CourseUser courseUser)) {
             return false;
         }
         return this.userId != null && this.userId.equals(courseUser.userId);
