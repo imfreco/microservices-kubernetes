@@ -10,6 +10,8 @@ public interface IUserService {
 
     Optional<User> getById(Long id);
 
+    List<User> getAllByIds(Iterable<Long> ids);
+
     User save(User user);
 
     void delete(Long id);

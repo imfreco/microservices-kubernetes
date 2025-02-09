@@ -28,6 +28,11 @@ public class UserController {
         return userFound.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/by-ids")
+    public ResponseEntity<List<User>> getAllByIds(@RequestParam List<Long> ids) {
+        return ResponseEntity.ok(userService.getAllByIds(ids));
+    }
+
     @PostMapping
     public ResponseEntity<?> create(@Valid @RequestBody User user, BindingResult result) {
         if (result.hasErrors()) {
