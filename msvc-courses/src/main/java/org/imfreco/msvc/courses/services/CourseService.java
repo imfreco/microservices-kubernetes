@@ -17,6 +17,7 @@ public class CourseService implements ICourseService {
     @Autowired
     private CourseRepository courseRepository;
 
+    @Autowired
     private UserRestClient userClient;
 
     @Override
@@ -64,13 +65,13 @@ public class CourseService implements ICourseService {
     public Optional<User> unassignUserFromCourse(User user, Long courseId) {
         Optional<Course> courseFound = courseRepository.findById(courseId);
         if (courseFound.isPresent()) {
-            User userCreated = userClient.create(user);
+            User userFound = userClient.getById(user.getId());
             Course currentCourse = courseFound.get();
             CourseUser courseUser = new CourseUser();
-            courseUser.setUserId(userCreated.getId());
+            courseUser.setUserId(userFound.getId());
             currentCourse.removeCourseUser(courseUser);
             courseRepository.save(currentCourse);
-            return Optional.of(userCreated);
+            return Optional.of(userFound);
         }
         return Optional.empty();
     }
@@ -80,13 +81,13 @@ public class CourseService implements ICourseService {
     public Optional<User> createUserToCourse(User user, Long courseId) {
         Optional<Course> courseFound = courseRepository.findById(courseId);
         if (courseFound.isPresent()) {
-            User userFound = userClient.getById(user.getId());
+            User userCreated = userClient.create(user);
             Course currentCourse = courseFound.get();
             CourseUser courseUser = new CourseUser();
-            courseUser.setUserId(userFound.getId());
+            courseUser.setUserId(userCreated.getId());
             currentCourse.addCourseUser(courseUser);
             courseRepository.save(currentCourse);
-            return Optional.of(userFound);
+            return Optional.of(userCreated);
         }
         return Optional.empty();
     }
