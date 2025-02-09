@@ -1,7 +1,9 @@
 package org.imfreco.msvc.courses.controllers;
 
+import feign.FeignException;
 import jakarta.validation.Valid;
 import org.imfreco.msvc.courses.models.Course;
+import org.imfreco.msvc.courses.models.User;
 import org.imfreco.msvc.courses.services.ICourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -9,10 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/courses")
@@ -33,7 +32,7 @@ public class CourseController {
 
     @PostMapping
     public ResponseEntity<?> create(@Valid @RequestBody Course course, BindingResult result) {
-        if(result.hasErrors()) {
+        if (result.hasErrors()) {
             return validate(result);
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(courseService.save(course));
@@ -41,11 +40,11 @@ public class CourseController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@Valid @RequestBody Course course, BindingResult result, @PathVariable Long id) {
-        if(result.hasErrors()) {
+        if (result.hasErrors()) {
             return validate(result);
         }
         Optional<Course> courseFound = courseService.getById(id);
-        if(courseFound.isEmpty()) {
+        if (courseFound.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         Course currentCourse = courseFound.get();
@@ -56,11 +55,53 @@ public class CourseController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Course> delete(@PathVariable Long id) {
         Optional<Course> courseFound = courseService.getById(id);
-        if(courseFound.isEmpty()) {
+        if (courseFound.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         courseService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{courseId}/assign-user")
+    public ResponseEntity<?> assignUser(@RequestBody User user, @PathVariable Long courseId) {
+        Optional<User> userAssigned;
+        try {
+            userAssigned = courseService.assignUserToCourse(user, courseId);
+        } catch (FeignException e) {
+            return ResponseEntity.internalServerError().body(Collections.singletonMap("message", "user cannot assign to course"));
+        }
+        if (userAssigned.isPresent()) {
+            return ResponseEntity.ok(userAssigned.get());
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @DeleteMapping("/{courseId}/unassign-user")
+    public ResponseEntity<?> unassignUser(@RequestBody User user, @PathVariable Long courseId) {
+        Optional<User> userUnassigned;
+        try {
+            userUnassigned = courseService.unassignUserFromCourse(user, courseId);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(Collections.singletonMap("message", "user cannot unassign from course"));
+        }
+        if (userUnassigned.isPresent()) {
+            return ResponseEntity.ok(userUnassigned.get());
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @PostMapping("/{courseId}/create-assign-user")
+    public ResponseEntity<?> createUser(@RequestBody User user, @PathVariable Long courseId) {
+        Optional<User> userCreated;
+        try {
+            userCreated = courseService.createUserToCourse(user, courseId);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(Collections.singletonMap("message", "user cannot create"));
+        }
+        if (userCreated.isPresent()) {
+            return ResponseEntity.status(HttpStatus.CREATED).body(userCreated.get());
+        }
+        return ResponseEntity.notFound().build();
     }
 
     private static ResponseEntity<Map<String, String>> validate(BindingResult result) {
