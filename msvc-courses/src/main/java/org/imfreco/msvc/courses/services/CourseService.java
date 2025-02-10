@@ -85,7 +85,7 @@ public class CourseService implements ICourseService {
             Course currentCourse = courseFound.get();
             Optional<CourseUser> courseUserToDelete = currentCourse.getCourseUsers().stream()
                     .filter(courseUser -> Objects.equals(courseUser.getUserId(), userFound.getId())).findFirst();
-            if(courseUserToDelete.isPresent()) {
+            if (courseUserToDelete.isPresent()) {
                 currentCourse.removeCourseUser(courseUserToDelete.get());
                 courseRepository.save(currentCourse);
             }
