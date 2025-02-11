@@ -20,8 +20,8 @@ public class CourseController {
     private ICourseService courseService;
 
     @GetMapping
-    public List<Course> getAll() {
-        return courseService.getAll();
+    public Map<String, List<Course>> getAll() {
+        return Collections.singletonMap("courses", courseService.getAll());
     }
 
     @GetMapping("/{id}")
