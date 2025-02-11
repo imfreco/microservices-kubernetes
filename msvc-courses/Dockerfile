@@ -1,4 +1,4 @@
-FROM amazoncorretto:21-alpine-jdk as builder
+FROM amazoncorretto:21-alpine-jdk AS builder
 
 WORKDIR /app/msvc-courses
 

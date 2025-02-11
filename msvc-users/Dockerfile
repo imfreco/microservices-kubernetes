@@ -1,6 +1,6 @@
 ARG MSVC_NAME=msvc-users
 
-FROM amazoncorretto:21-alpine-jdk as builder
+FROM amazoncorretto:21-alpine-jdk AS builder
 ARG MSVC_NAME
 WORKDIR /app/$MSVC_NAME
 
