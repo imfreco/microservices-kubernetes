@@ -23,10 +23,10 @@ services:
     restart: always
   msvc-users:
     container_name: msvc-users
-    build:
-      context: .
-      dockerfile: ./msvc-users/Dockerfile
-    image: micro-users:0.0.1
+#    build:
+#      context: .
+#      dockerfile: ./msvc-users/Dockerfile
+    image: imfreco/micro-users
     ports:
       - "8001:8001"
     env_file: ./msvc-users/.env
@@ -35,10 +35,10 @@ services:
     restart: always
   msvc-courses:
     container_name: msvc-courses
-    build:
-      context: .
-      dockerfile: ./msvc-courses/Dockerfile
-    image: micro-courses:0.0.1
+#    build:
+#      context: .
+#      dockerfile: ./msvc-courses/Dockerfile
+    image: imfreco/micro-courses
     ports:
       - "8002:8002"
     env_file:
